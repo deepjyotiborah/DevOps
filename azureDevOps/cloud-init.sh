@@ -19,7 +19,10 @@ mkdir $CONFIG_FOLDER
 chown 1000 $CONFIG_FOLDER
  
 # Start container
-sudo docker run -d -p 8080:8080 -v $CONFIG_FOLDER:/var/jenkins_home:z --rm --name myjenkins deepborah/resource-image:v1
+#GID=`grep docker /etc/group`
+#sudo docker run -d -p 8080:8080 -v -u $CONFIG_FOLDER:/var/jenkins_home:z --rm --name -u jenkins:$GID myjenkins deepborah/resource-image:v1
+#sudo docker run -d -p 8080:8080 -v /var/run/docker.sock:/var/run/docker.sock -v $(which docker):/usr/bin/docker -v -u $CONFIG_FOLDER:/var/jenkins_home:z --rm --name myjenkins deepborah/resource-image:v1
+sudo docker run -d -p 8080:8080 -v -u $CONFIG_FOLDER:/var/jenkins_home:z --rm --name myjenkins deepborah/resource-image:v2
 
 #Installing ansible
-sudo apt-get install -y ansible
+#sudo apt-get install -y ansible
