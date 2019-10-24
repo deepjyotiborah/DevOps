@@ -3,11 +3,6 @@
 pipeline {
   agent any
   stages {
-    stage('Checkout') {
-        steps {
-            git url: 'https://github.com/spring-projects/spring-petclinic.git', credentialsId: 'spring-projects', branch: 'master'
-        }
-    }
     stage('Maven Install') {
       agent {
         docker {
@@ -18,12 +13,14 @@ pipeline {
         sh 'mvn clean install'
       }
     }
+
     stage('Docker Build') {
       agent any
       steps {
-        sh 'docker build -t deepborah/spring-petclinic:latest .'
+        sh 'docker build -t deepborah/spring-petclinic:latest -f Dockerfile-Jenkins.'
       }
     }
+
     stage('Docker Push') {
       agent any
       steps {
