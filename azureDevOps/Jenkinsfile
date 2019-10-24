@@ -17,7 +17,7 @@ pipeline {
     stage('Docker Build') {
       agent any
       steps {
-        sh 'docker build -t deepborah/spring-petclinic:latest -f Dockerfile-Jenkins.'
+        sh 'docker build -t deepborah/spring-petclinic:latest -f Dockerfile-Jenkins'
       }
     }
 
