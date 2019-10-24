@@ -10,7 +10,7 @@ sudo systemctl status docker
 
 
 # Pull latest container
-sudo docker pull deepborah/resource-image:v1
+sudo docker pull deepborah/resource-image:v2
  
 # Setup local configuration folder
 # Should already be in a jenkins folder when running this script.
@@ -22,7 +22,9 @@ chown 1000 $CONFIG_FOLDER
 #GID=`grep docker /etc/group`
 #sudo docker run -d -p 8080:8080 -v -u $CONFIG_FOLDER:/var/jenkins_home:z --rm --name -u jenkins:$GID myjenkins deepborah/resource-image:v1
 #sudo docker run -d -p 8080:8080 -v /var/run/docker.sock:/var/run/docker.sock -v $(which docker):/usr/bin/docker -v -u $CONFIG_FOLDER:/var/jenkins_home:z --rm --name myjenkins deepborah/resource-image:v1
-sudo docker run -d -p 8080:8080 -v -u $CONFIG_FOLDER:/var/jenkins_home:z --rm --name myjenkins deepborah/resource-image:v2
+sudo docker run -d -p 8080:8080 -p 50000:50000  -v /var/run/docker.sock:/var/run/docker.sock -v $CONFIG_FOLDER:/var/jenkins_home:z  deepborah/resource-image:v2
 
-#Installing ansible
-#sudo apt-get install -y ansible
+#Install Ansible
+sudo apt install software-properties-common
+sudo apt-add-repository --yes --update ppa:ansible/ansible
+sudo apt install ansible
