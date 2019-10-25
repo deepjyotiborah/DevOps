@@ -65,6 +65,8 @@ resource "azurerm_network_interface" "private_demoNetworkInterface_Deep" {
     name = "private_demoNetworkInterface_Configuration"
     subnet_id = "${azurerm_subnet.demoSubnetPrivate_Deep.id}"
     private_ip_address_allocation = "Dynamic"
+    load_balancer_backend_address_pools_ids = ["${azurerm_lb_backend_address_pool.demoLBBackendPool.id}"]
+    load_balancer_inbound_nat_rules_ids = ["${azurerm_lb_nat_rule.demoNATRule.id}"]
   }
   tags = {
     environment = "${azurerm_resource_group.demoResourceGroup_Deep.tags.environment}"
@@ -134,6 +136,7 @@ resource "azurerm_virtual_machine" "private_demoVirtualMachine_Deep" {
   os_profile {
     computer_name = "privateVmDeep"
     admin_username = "adminuser"
+    custom_data = "${file("./deploy_to_private.sh")}"
   }
 
   os_profile_linux_config {
@@ -147,6 +150,66 @@ resource "azurerm_virtual_machine" "private_demoVirtualMachine_Deep" {
     environment = "${azurerm_resource_group.demoResourceGroup_Deep.tags.environment}"
   }
 }
+resource "azurerm_public_ip" "demoLBPublicIP" {
+  name                = "demoLBPublicIP"
+  location            = "${azurerm_resource_group.demoResourceGroup_Deep.location}"
+  resource_group_name = "${azurerm_resource_group.demoResourceGroup_Deep.name}"
+  allocation_method   = "Dynamic"
+}
+
+resource "azurerm_lb" "demoLoadBalancer" {
+  resource_group_name = "${azurerm_resource_group.demoResourceGroup_Deep.name}"
+  name = "demoLoadBalancer"
+  location = "${azurerm_resource_group.demoResourceGroup_Deep.location}"
+  frontend_ip_configuration {
+    name = "demoLBFrontEndIPConfig"
+    public_ip_address_id = "${azurerm_public_ip.demoLBPublicIP.id}"
+  }
+}
+
+resource "azurerm_lb_backend_address_pool" "demoLBBackendPool" {
+  resource_group_name = "${azurerm_resource_group.demoResourceGroup_Deep.name}"
+  loadbalancer_id = "${azurerm_lb.demoLoadBalancer.id}"
+  name = "demoLBBackendPool"
+}
+
+resource "azurerm_lb_probe" "demoLBProbe" {
+  resource_group_name = "${azurerm_resource_group.demoResourceGroup_Deep.name}"
+  loadbalancer_id = "${azurerm_lb.demoLoadBalancer.id}"
+  name = "demoLBProbe"
+  protocol = "tcp"
+  port = 8080
+  interval_in_seconds = 5
+  number_of_probes = 2
+}
+
+resource "azurerm_lb_nat_rule" "demoNATRule" {
+  resource_group_name            = "${azurerm_resource_group.demoResourceGroup_Deep.name}"
+  loadbalancer_id                = "${azurerm_lb.demoLoadBalancer.id}"
+  name                           = "RDP-VM"
+  protocol                       = "tcp"
+  frontend_port                  = 5000
+  backend_port                   = 8080
+  frontend_ip_configuration_name = "demoLBFrontEndIPConfig"
+}
+
+resource "azurerm_lb_rule" "demoLBRule" {
+  resource_group_name = "${azurerm_resource_group.demoResourceGroup_Deep.name}"
+  loadbalancer_id = "${azurerm_lb.demoLoadBalancer.id}"
+  name = "demoLBRule"
+  protocol = "tcp"
+  frontend_port = 80
+  backend_port = 80
+  frontend_ip_configuration_name = "demoLBFrontEndIPConfig"
+  enable_floating_ip = "false"
+  backend_address_pool_id = "${azurerm_lb_backend_address_pool.demoLBBackendPool.id}"
+  idle_timeout_in_minutes = 5
+  probe_id = "${azurerm_lb_probe.demoLBProbe.id}"
+  depends_on = ["azurerm_lb_probe.demoLBProbe"]
+}
+
+
+
 
 
 
