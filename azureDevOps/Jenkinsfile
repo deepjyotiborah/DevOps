@@ -3,41 +3,45 @@
 pipeline {
   agent any
   stages {
-    // stage('Maven Install') {
-    //   agent {
-    //     docker {
-    //       image 'maven:3.5.0'
-    //     }
-    //   }
-    //   steps {
-    //     sh 'mvn -f azureDevOps/ clean install'
-    //   }
-    // }
+    stage('Maven Install') {
+      agent {
+        docker {
+          image 'maven:3.5.0'
+        }
+      }
+      steps {
+        sh 'mvn -f azureDevOps/ clean install'
+      }
+    }
 
-    // stage('Docker Build') {
-    //   agent any
-    //   steps {
-    //     sh 'docker build -t deepborah/spring-petclinic:latest -f azureDevOps/Dockerfile-jenkins .'
-    //   }
-    // }
+    stage('Docker Build') {
+      agent any
+      steps {
+        sh 'docker build -t deepborah/spring-petclinic:latest -f azureDevOps/Dockerfile-jenkins .'
+      }
+    }
 
-    // stage('Docker Push') {
-    //   agent any
-    //   steps {
-    //     withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
-    //       sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
-    //       sh 'docker push deepborah/spring-petclinic:latest'
-    //     }
-    //   }
-    // }
+    stage('Docker Push') {
+      agent any
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+          sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
+          sh 'docker push deepborah/spring-petclinic:latest'
+        }
+      }
+    }
 
     stage('Run ansible script') {
-        ansiblePlaybook('azureDevOps/deployWithAnsible.yml') {  
-        inventoryPath('azureDevOps/hosts')  
-        //ansibleName('Ansible2.0')  
-        credentialsId('vmcred')  
-        colorizedOutput(true)  
-      }  
+        agent any
+        steps {
+           ansiblePlaybook(
+            playbook: "azureDevOps/deployWithAnsible.yml"
+            inventory: "azureDevOps/hosts"
+            colorizedOutput: "true"
+            credentialsId: 'vmcred'
+         )
+        }
+        
     }
   }
 }
