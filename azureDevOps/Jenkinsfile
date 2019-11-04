@@ -34,14 +34,21 @@ pipeline {
     stage('Run ansible script') {
         agent any
         steps {
-           ansiblePlaybook(
-            playbook: "azureDevOps/deployWithAnsible.yml"
-            inventory: "azureDevOps/hosts"
-            colorizedOutput: "true"
-            credentialsId: 'vmcred'
-         )
+           invokePlaybook()
         }
         
     }
   }
+}
+
+def invokePlaybook() {
+
+  ansiblePlaybook
+    //credentialsId: 'jenkins-gitlab-ssh-key',
+    //extras: '--extra-vars @extra_vars.json',
+    //installation: 'Ansible-2.3.0',
+    inventory: 'azureDevOps/hosts',
+    playbook: 'azureDevOps/deployWithAnsible.yml',
+    sudo: true, sudoUser: "adminuser"
+
 }
