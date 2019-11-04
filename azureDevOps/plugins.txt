@@ -74,3 +74,4 @@ workflow-aggregator
 pipeline-github-lib
 pipeline-utility-steps
 job-dsl
+ansible
