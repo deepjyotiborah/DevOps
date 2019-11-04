@@ -32,12 +32,12 @@ pipeline {
     // }
 
     stage('Run ansible script') {
-        ansiblePlaybook(
-            playbook: "azureDevOps/deployWithAnsible.yml"
-            inventory: "azureDevOps/hosts"
-            colorizedOutput: "true"
-            credentialsId: 'vmcred'
-        )
+        ansiblePlaybook('azureDevOps/deployWithAnsible.yml') {  
+        inventoryPath('azureDevOps/hosts')  
+        //ansibleName('Ansible2.0')  
+        credentialsId('vmcred')  
+        colorizedOutput(true)  
+      }  
     }
   }
 }
