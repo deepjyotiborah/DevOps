@@ -1,5 +1,5 @@
 [private-server]
-172.20.20.4 ansible_user=adminuser ansible_ssh_pass=admin@123
+privateVmDeep ansible_user=adminuser ansible_ssh_pass=admin@123
 
 [private-server:vars]
 ansible_ssh_common_args='-o StrictHostKeyChecking=no'
