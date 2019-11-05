@@ -41,11 +41,24 @@ pipeline {
 }
 
 def invokePlaybook() {
-    ansiblePlaybook('azureDevOps/deployWithAnsible.yml') {
-      credentialsId: 'vmcred',
-        //extras: '--extra-vars @extra_vars.json',
-      //installation: 'Ansible-2.3.0',
-      inventory: 'azureDevOps/hosts',
-      //playbook: 'azureDevOps/playbook.yml'
-    } 
+
+    withEnv(["PYTHONPATH=/home/adminuser/ansible/lib"]) {
+                ansiblePlaybook([
+                    colorized: true,
+                    credentialsId: 'vmcred',
+                    installation: 'ansible-2-2-0',
+                    inventory: 'azureDevOps/hosts',
+                    playbook: 'azureDevOps/deployWithAnsible.yml',
+                   // extras: "--extra-vars 'app_build_id=${git_commit}'"
+                ])
+
+            }
+
+    // ansiblePlaybook('azureDevOps/deployWithAnsible.yml') {
+    //   credentialsId: 'vmcred',
+    //     //extras: '--extra-vars @extra_vars.json',
+    //   //installation: 'Ansible-2.3.0',
+    //   inventory: 'azureDevOps/hosts',
+    //   //playbook: 'azureDevOps/playbook.yml'
+    // } 
 }
