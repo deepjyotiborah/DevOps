@@ -46,6 +46,6 @@ def invokePlaybook() {
       credentialsId: 'vmcred',
         //extras: '--extra-vars @extra_vars.json',
       //installation: 'Ansible-2.3.0',
-      inventory: ''azureDevOps/,
+      inventory: ''azureDevOps/hosts,
       playbook: 'azureDevOps/playbook.yml'
 }
