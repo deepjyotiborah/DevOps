@@ -28,6 +28,12 @@ COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
 RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/plugins.txt
 COPY config.xml /usr/share/jenkins/ref/jobs/seed/config.xml
 
-#RUN apt-get update 
-# RUN groupadd docker && gpasswd -a jenkins docker 
-# USER jenkins
+RUN apt-get -y install sshpass
+
+#Install Ansible
+RUN apt update
+RUN apt install software-properties-common
+RUN apt-add-repository ppa:ansible/ansible
+RUN apt -y install ansible
+
+RUN export ANSIBLE_HOST_KEY_CHECKING=False
