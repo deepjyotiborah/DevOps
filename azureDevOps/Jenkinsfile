@@ -36,16 +36,16 @@ pipeline {
         steps {
            invokePlaybook()
         }
-        
     }
   }
 }
 
 def invokePlaybook() {
-    ansiblePlaybook
+    ansiblePlaybook('azureDevOps/deployWithAnsible.yml') {
       credentialsId: 'vmcred',
         //extras: '--extra-vars @extra_vars.json',
       //installation: 'Ansible-2.3.0',
-      inventory: ''azureDevOps/hosts,
-      playbook: 'azureDevOps/playbook.yml'
+      inventory: 'azureDevOps/hosts',
+      //playbook: 'azureDevOps/playbook.yml'
+    } 
 }
