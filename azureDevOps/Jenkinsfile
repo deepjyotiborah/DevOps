@@ -42,13 +42,10 @@ pipeline {
 }
 
 def invokePlaybook() {
-
-  ansiblePlaybook
-    //credentialsId: 'jenkins-gitlab-ssh-key',
-    //extras: '--extra-vars @extra_vars.json',
-    //installation: 'Ansible-2.3.0',
-    inventory: 'azureDevOps/hosts',
-    playbook: 'azureDevOps/deployWithAnsible.yml',
-    sudo: true, sudoUser: "adminuser"
-
+    ansiblePlaybook
+      credentialsId: 'vmcred',
+        //extras: '--extra-vars @extra_vars.json',
+      //installation: 'Ansible-2.3.0',
+      inventory: ''azureDevOps/,
+      playbook: 'azureDevOps/playbook.yml'
 }
