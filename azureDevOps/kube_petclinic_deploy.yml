@@ -1,27 +1,21 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: petclinic-app
+  name: spring-petclinic-app
+  labels:
+    app: spring-petclinic-app
 spec:
   replicas: 2
-  strategy:
-    type: RollingUpdate
-
-  template:
-    metadata:
-      name: spring-petclinic-app-pod
-      labels:
-        app: petclinicApp
-    spec:
-      containers:
-        - name: petclinic-container
-          image: deepborah/spring-petclinic:latest
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 80
   selector:
     matchLabels:
-      app: petclinicApp
-
-
-
+      app: spring-petclinic-app
+  template:
+    metadata:
+      labels:
+        app: spring-petclinic-app
+    spec:
+      containers:
+        - name: spring-petclinic-app
+          image: deepborah/spring-petclinic
+          ports:
+            - containerPort: 8080
