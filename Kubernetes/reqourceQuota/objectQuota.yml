@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: objectquota
+  namespace: object-demo
+spec:
+  hard:
+    pods: 5
